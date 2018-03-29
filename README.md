@@ -1,2 +1,1 @@
-# stochcomp
-stochastic computing
+# stochastic computing
