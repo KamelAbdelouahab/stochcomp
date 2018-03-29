@@ -1,1 +1,1 @@
-# stochastic computing
+stochastic computing
