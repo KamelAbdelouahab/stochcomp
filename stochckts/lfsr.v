@@ -1,17 +1,20 @@
-module lfsr#(parameter n=4)(out, clk, rst);
-
-  output reg [(n-1):0] out;
+module lfsr#(parameter n=4)(Q, seed, clk, rst);
+  input [(n-1):0] seed;
   input clk, rst;
+  output [(n-1):0] Q;
+  
+  reg [(n-1):0] Q;
 
-  wire feedback;
-
-  assign feedback = (out[(n-1)] ^ out[(n-2)]);
-
-  always@(posedge clk or posedge rst)
-  begin
-    if (rst)
-      out = (1 << (n-1)); // 4'h0200
-    else
-      out = {out[(n-2):0],feedback};
-  end
+  initial
+    Q = seed;
+  
+  always@(negedge rst)
+    Q = seed;
+  
+  always@(posedge clk)
+    case(n)
+      4:  Q = {Q[2:0], (Q[2] ^ Q[3])};
+      10: Q = {Q[8:0], (Q[6] ^ Q[9])};
+    endcase
+  
 endmodule

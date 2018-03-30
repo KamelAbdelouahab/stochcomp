@@ -1,24 +1,30 @@
-module sng_tb#(parameter n=4);  
+module sng_tb();  
+  parameter
+    n=10;
+    
   reg clk, rst;
-  reg [(n-1):0] A;
+  reg [(n-1):0] A, seed;
   wire Y;
   wire [(n-1):0] a;
   
-  sng #(n) sng1(Y, A, clk, rst);
-  dru #(n) dru1(a, Y, clk, rst);
-  
   initial begin
-    rst = 0; clk = 0;
-    A = 4'd5; 
-    $monitor($time, , ,"clk=%b",clk,,"Y=%b",Y,,"rst=%b",rst,,"a=%d",a);
-    #5 rst = 1;
-    #5 rst = 0;
+    #0 rst <= 1;
+    #0 clk <= 0;
+    case(n)
+      04: begin A <= 4'd12;   seed <= 4'h4;    end
+      10: begin A <= 10'd575; seed <= 10'h008; end
+    endcase
+    
+    $monitor($time,"\tclk=%b",clk,,"Y=%b",Y,,"rst=%b",rst,,"A=%d\t",A,"a=%d",a);
+    
+    #2 rst = 0;
+    #2 rst = 1;
   end
   
-  always
-  #5 clk=~clk;
+  sng #(n) sng1(Y, A, seed, clk, rst);
+  dru #(n) dru1(a, Y, clk, rst);
   
-  //initial
-//  #150 $finish;
+  always
+    #5 clk = ~clk;
   
 endmodule
